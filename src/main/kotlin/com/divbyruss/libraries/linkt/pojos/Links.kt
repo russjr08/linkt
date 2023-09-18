@@ -18,7 +18,7 @@
 
 package com.divbyruss.libraries.linkt.pojos
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Represents the response from LinkAce's `/api/v1/links` endpoint, which contains
@@ -45,31 +45,31 @@ data class Links(
     /**
      * A URL to the previous page of Links through the API.
      */
-    @Json(name = "prev_page_url") val prevPageUrl: String?,
+    @SerializedName("prev_page_url") val prevPageUrl: String?,
 
     /**
      * The number of Links returned by each page via the API.
      */
-    @Json(name = "per_page") val perPage: String,
+    @SerializedName("per_page") val perPage: String,
 
     /**
      * A URL to the next page of Links through the API.
      */
-    @Json(name = "next_page_url") val nextPageUrl: String?,
+    @SerializedName("next_page_url") val nextPageUrl: String?,
 
     /**
      * A URL to the last page of Links through the API.
      */
-    @Json(name = "last_page") val lastPage: Int,
+    @SerializedName("last_page") val lastPage: Int,
 
     /**
      * A URL to the first page of Links through the API.
      */
-    @Json(name = "first_page_url") val firstPageUrl: String?,
+    @SerializedName("first_page_url") val firstPageUrl: String?,
 
     /**
      * The collection of Links returned in this page. Represented
      * by a [List] of [Link] objects.
      */
-    @Json(name = "data") val links: List<Link>
+    @SerializedName("data") val links: List<Link>
 )

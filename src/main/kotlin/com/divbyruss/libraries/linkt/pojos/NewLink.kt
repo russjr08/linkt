@@ -19,7 +19,7 @@
 package com.divbyruss.libraries.linkt.pojos
 
 import com.divbyruss.libraries.linkt.interfaces.http.LinkService
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Represents a new link that will be used when invoking
@@ -57,7 +57,7 @@ data class NewLink(
      * LinkAce will set it to whatever is specified by the user's
      * preferences.
      */
-    @Json(name = "is_private") val isPrivate: Boolean,
+    @SerializedName("is_private") val isPrivate: Boolean,
 
     /**
      * Allows setting whether LinkAce should try to monitor this link
@@ -65,6 +65,6 @@ data class NewLink(
      *
      * @see Link.isCheckDisabled
      */
-    @Json(name = "check_disabled") val isCheckDisabled: Boolean
+    @SerializedName("check_disabled") val isCheckDisabled: Boolean
 
 )

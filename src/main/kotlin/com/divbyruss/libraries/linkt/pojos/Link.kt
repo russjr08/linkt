@@ -18,7 +18,7 @@
 
 package com.divbyruss.libraries.linkt.pojos
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Represents a link returned by the LinkAce API.
@@ -50,7 +50,7 @@ data class Link(
     /**
      * The ID of the user that this link belongs to.
      */
-    @Json(name = "user_id") val userId: Int,
+    @SerializedName("user_id") val userId: Int,
 
     /**
      * The FontAwesome tag that is associated with this link. This is not the website
@@ -61,27 +61,27 @@ data class Link(
     /**
      * Whether this link requires authentication from the original user's account in order to view.
      */
-    @Json(name = "is_private") val isPrivate: Boolean = false,
+    @SerializedName("is_private") val isPrivate: Boolean = false,
 
     /**
      * LinkAce automatically monitors links to see if they've changed URLs, or are no longer available.
      * This field indicates whether the user has opted to disable these checks.
      */
-    @Json(name = "check_disabled") val isCheckDisabled: Boolean = false,
+    @SerializedName("check_disabled") val isCheckDisabled: Boolean = false,
 
     /**
      * Creation time of this link.
      */
-    @Json(name = "created_at") val createdAt: String,
+    @SerializedName("created_at") val createdAt: String,
 
     /**
      * The last update time of this link, by the user.
      * NOTE: This is not the last time the link was updated at its source.
      */
-    @Json(name = "updated_at") val updatedAt: String,
+    @SerializedName("updated_at") val updatedAt: String,
 
     /**
      * The time this link was deleted, used mainly when using the Trash endpoint.
      */
-    @Json(name = "deleted_at") val deletedAt: String?
+    @SerializedName("deleted_at") val deletedAt: String?
 )

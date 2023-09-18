@@ -21,14 +21,15 @@ package com.divbyruss.libraries.linkt
 import com.divbyruss.libraries.linkt.interfaces.http.LinkService
 import com.divbyruss.libraries.linkt.pojos.Link
 import com.divbyruss.libraries.linkt.pojos.Links
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.divbyruss.libraries.linkt.pojos.SortField
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.system.exitProcess
 
 /**
@@ -48,9 +49,9 @@ class LinktClient(private val baseUrl: String, apiKey: String) {
         .addInterceptor(LinktRequestInterceptor(apiKey))
         .build()
 
-    private val moshi: Moshi = Moshi.Builder()
-        .addLast(KotlinJsonAdapterFactory())
-        .build()
+    private val gson: Gson = GsonBuilder()
+        .setLenient()
+        .create()
 
     /**
      * Retrieves an instance of the Retrofit client, which will be used to make
@@ -63,7 +64,8 @@ class LinktClient(private val baseUrl: String, apiKey: String) {
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("$baseUrl/api/v1/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(EnumConverterFactory())
             .build()
 
 }
@@ -81,6 +83,7 @@ class LinktRequestInterceptor(private val apiKey: String) : Interceptor {
             )
             .build()
         println("[Linkt] Making ${request.method()} request over to: ${request.url().url().toString()}")
+        println("Query parameters: ${request}")
 
         return chain.proceed(request)
     }
@@ -120,5 +123,26 @@ fun main() {
     }
 
     println(links) // Print all the found links
+
+    // Test the LinkService.getLinksWithParams method
+    var linksWithParamsResp = linkService.getLinksWithParams(7, SortField.TITLE, SortField.OrderDirection.ASCENDING)
+        .execute()
+    if(!linksWithParamsResp.isSuccessful) {
+        error(linksWithParamsResp.errorBody()!!.string())
+    }
+    val linksWithParamsBody: Links? = resp.body()
+
+    println(linksWithParamsBody.toString())
+
+    var specificLinkReq = linkService.getLink(5).execute()
+
+    if(!specificLinkReq.isSuccessful) {
+        error(specificLinkReq.errorBody()!!.string())
+    }
+
+    val specificLinkBody: Link? = specificLinkReq.body()
+
+    println(specificLinkBody.toString())
+
     exitProcess(0) // And that's a wrap!
 }
