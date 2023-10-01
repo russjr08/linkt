@@ -20,8 +20,9 @@ package com.divbyruss.libraries.linkt
 
 import com.divbyruss.libraries.linkt.interfaces.http.LinkService
 import com.divbyruss.libraries.linkt.pojos.Link
-import com.divbyruss.libraries.linkt.pojos.Links
+import com.divbyruss.libraries.linkt.pojos.PaginatedResponse
 import com.divbyruss.libraries.linkt.pojos.SortField
+import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.HttpUrl
@@ -51,6 +52,7 @@ class LinktClient(private val baseUrl: String, apiKey: String) {
 
     private val gson: Gson = GsonBuilder()
         .setLenient()
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
 
     /**
@@ -102,7 +104,7 @@ fun main() {
     // Send off a request to start grabbing all links from LinkAce
     val resp = linkService.getLinks().execute()
 
-    val body: Links? = resp.body()
+    val body: PaginatedResponse<Link>? = resp.body()
 
     var nextPageUrl: String? // LinkAce's API uses pagination, so expect to possibly iterate over the pages
     val links: ArrayList<Link> = ArrayList()
@@ -130,7 +132,7 @@ fun main() {
     if(!linksWithParamsResp.isSuccessful) {
         error(linksWithParamsResp.errorBody()!!.string())
     }
-    val linksWithParamsBody: Links? = resp.body()
+    val linksWithParamsBody: PaginatedResponse<Link>? = resp.body()
 
     println(linksWithParamsBody.toString())
 

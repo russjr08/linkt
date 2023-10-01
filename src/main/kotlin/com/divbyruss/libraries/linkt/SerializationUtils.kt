@@ -25,8 +25,11 @@ import java.lang.reflect.Type
 
 // https://stackoverflow.com/a/35801262/1391553
 class EnumConverterFactory : Converter.Factory() {
-    override fun stringConverter(type: Type?, annotations: Array<out Annotation>?,
-                                 retrofit: Retrofit?): Converter<*, String>? {
+    override fun stringConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<*, String>? {
         if (type is Class<*> && type.isEnum) {
             return Converter<Any?, String> { value -> getSerializedNameValue(value as Enum<*>) }
         }

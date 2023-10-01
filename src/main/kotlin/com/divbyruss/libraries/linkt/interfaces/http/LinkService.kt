@@ -19,8 +19,8 @@
 package com.divbyruss.libraries.linkt.interfaces.http
 
 import com.divbyruss.libraries.linkt.pojos.Link
-import com.divbyruss.libraries.linkt.pojos.Links
 import com.divbyruss.libraries.linkt.pojos.NewLink
+import com.divbyruss.libraries.linkt.pojos.PaginatedResponse
 import com.divbyruss.libraries.linkt.pojos.SortField
 import retrofit2.Call
 import retrofit2.http.*
@@ -33,10 +33,10 @@ interface LinkService {
     /**
      * Initiates a GET request over to `/api/v1/links`, and returns the data
      * returned by the API as a Retrofit [Call], which will contain the wrapped
-     * model of this response, a [Links] object.
+     * model of this response, a [PaginatedResponse] object, containing a list of [Link]s.
      */
     @GET("links")
-    fun getLinks(): Call<Links>
+    fun getLinks(): Call<PaginatedResponse<Link>>
 
     /**
      * Similar to [getLinks] but allows for passing in extra parameters to the LinkAce
@@ -49,18 +49,18 @@ interface LinkService {
      */
     @GET("links")
     fun getLinksWithParams(@Query("per_page") perPage: Int, @Query("order_by") orderBy: SortField,
-                           @Query("order_dir") orderDirection: SortField.OrderDirection): Call<Links>
+                           @Query("order_dir") orderDirection: SortField.OrderDirection): Call<PaginatedResponse<Link>>
 
     /**
      * Generally used in tandem with the [getLinks] method. The `/api/v1/links` endpoint
      * is paginated, and this method allows you to specify which page you wish to obtain.
      *
      * WHen looking for all Links, you would generally run [getLinks] initially, then look at the
-     * returned [Links.nextPageUrl] and extract the page number, and use it here. Then continue
-     * doing so until [Links.nextPageUrl] is null.
+     * returned [PaginatedResponse.nextPageUrl] and extract the page number, and use it here. Then continue
+     * doing so until [PaginatedResponse.nextPageUrl] is null.
      */
     @GET("links")
-    fun getPagedLinks(@Query("page") page: Int): Call<Links>
+    fun getPagedLinks(@Query("page") page: Int): Call<PaginatedResponse<Link>>
 
     /**
      * Creates a new Link with the LinkAce API, and returns the resultant created [Link].
@@ -128,5 +128,5 @@ interface LinkService {
                     @Query("empty_tags") emptyTags: Boolean = false,
                     @Query("only_lists") onlyLists: String = "",
                     @Query("only_tags") onlyTags: String = "",
-                    @Query("order_by") orderBy: String = "title:asc"): Call<Links>
+                    @Query("order_by") orderBy: String = "title:asc"): Call<PaginatedResponse<Link>>
 }

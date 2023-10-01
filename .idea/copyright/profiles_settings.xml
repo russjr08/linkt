@@ -1,7 +1,3 @@
 <component name="CopyrightManager">
-  <settings default="Linkt Copyright">
-    <module2copyright>
-      <element module="All" copyright="Linkt Copyright" />
-    </module2copyright>
-  </settings>
+  <settings default="Linkt Copyright" />
 </component>
