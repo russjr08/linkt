@@ -55,7 +55,7 @@ interface LinkService {
      * Generally used in tandem with the [getLinks] method. The `/api/v1/links` endpoint
      * is paginated, and this method allows you to specify which page you wish to obtain.
      *
-     * WHen looking for all Links, you would generally run [getLinks] initially, then look at the
+     * When looking for all Links, you would generally run [getLinks] initially, then look at the
      * returned [PaginatedResponse.nextPageUrl] and extract the page number, and use it here. Then continue
      * doing so until [PaginatedResponse.nextPageUrl] is null.
      */
