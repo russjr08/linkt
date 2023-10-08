@@ -18,6 +18,8 @@
 
 package com.divbyruss.libraries.linkt.pojos
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * When querying most collection of objects from LinkAce, it is returned wrapped in pagination.
  * Since the format of this response is standardized across the API, this class represents that format,
@@ -68,5 +70,5 @@ data class PaginatedResponse<T>(
      * The collection of objects returned in this page. Represented
      * by a [List] of the generic type passed in, [T], objects.
      */
-    val links: List<T>
+    @SerializedName("data") val objects: List<T>
 )

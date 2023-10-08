@@ -19,7 +19,9 @@
 package com.divbyruss.libraries.linkt
 
 import com.divbyruss.libraries.linkt.interfaces.http.LinkService
+import com.divbyruss.libraries.linkt.interfaces.http.ListService
 import com.divbyruss.libraries.linkt.pojos.Link
+import com.divbyruss.libraries.linkt.pojos.LinktList
 import com.divbyruss.libraries.linkt.pojos.PaginatedResponse
 import com.divbyruss.libraries.linkt.pojos.SortField
 import com.google.gson.FieldNamingPolicy
@@ -92,6 +94,7 @@ class LinktRequestInterceptor(private val apiKey: String) : Interceptor {
 
 }
 
+// Used as a quick way to test the library, since who needs unit testing anyway!
 fun main() {
     // Grab the LinkAce host and API Key from the program's environmental variables
     val baseUrl = System.getenv("LA_HOST") ?: error("You must provide the LA_HOST env variable!")
@@ -101,50 +104,76 @@ fun main() {
     val testClient = LinktClient(baseUrl, apiKey)
     val linkService = testClient.getClient().create(LinkService::class.java)
 
-    // Send off a request to start grabbing all links from LinkAce
-    val resp = linkService.getLinks().execute()
+    run {
 
-    val body: PaginatedResponse<Link>? = resp.body()
+        // Send off a request to start grabbing all links from LinkAce
+        val request = linkService.getLinks().execute()
 
-    var nextPageUrl: String? // LinkAce's API uses pagination, so expect to possibly iterate over the pages
-    val links: ArrayList<Link> = ArrayList()
+        val body: PaginatedResponse<Link>? = request.body()
 
-    nextPageUrl = body?.nextPageUrl
+        var nextPageUrl: String? // LinkAce's API uses pagination, so expect to possibly iterate over the pages
+        val links: ArrayList<Link> = ArrayList()
 
-    body?.links?.let { links.addAll(it) } // Add all links from Page #1 to our collection of links
+        nextPageUrl = body?.nextPageUrl
 
-    // Iterate through all the pages returned by the API until we no longer have any more pages
-    while(nextPageUrl != null) {
-        val nextPageIndex = HttpUrl.parse(nextPageUrl)?.queryParameter("page")?.toInt() ?: break
+        body?.objects?.let { links.addAll(it) } // Add all links from Page #1 to our collection of links
 
-        val pageRequest = linkService.getPagedLinks(nextPageIndex).execute()
-        val pageBody = pageRequest.body()
+        // Iterate through all the pages returned by the API until we no longer have any more pages
+        while(nextPageUrl != null) {
+            val nextPageIndex = HttpUrl.parse(nextPageUrl)?.queryParameter("page")?.toInt() ?: break
 
-        nextPageUrl = pageBody?.nextPageUrl
-        pageBody?.links?.let { links.addAll(it) }
+            val pageRequest = linkService.getPagedLinks(nextPageIndex).execute()
+            val pageBody = pageRequest.body()
+
+            nextPageUrl = pageBody?.nextPageUrl
+            pageBody?.objects?.let { links.addAll(it) }
+        }
+
+        println(links) // Print all the found links
     }
 
-    println(links) // Print all the found links
+    println("-------------------------")
 
-    // Test the LinkService.getLinksWithParams method
-    var linksWithParamsResp = linkService.getLinksWithParams(7, SortField.TITLE, SortField.OrderDirection.ASCENDING)
-        .execute()
-    if(!linksWithParamsResp.isSuccessful) {
-        error(linksWithParamsResp.errorBody()!!.string())
-    }
-    val linksWithParamsBody: PaginatedResponse<Link>? = resp.body()
+    run {
+        // Test the LinkService.getLinksWithParams method
+        val request = linkService.getLinksWithParams(7, SortField.TITLE, SortField.OrderDirection.ASCENDING)
+            .execute()
+        if (!request.isSuccessful) {
+            error(request.errorBody()!!.string())
+        }
+        val body: PaginatedResponse<Link>? = request.body()
 
-    println(linksWithParamsBody.toString())
-
-    var specificLinkReq = linkService.getLink(5).execute()
-
-    if(!specificLinkReq.isSuccessful) {
-        error(specificLinkReq.errorBody()!!.string())
+        println(body.toString())
     }
 
-    val specificLinkBody: Link? = specificLinkReq.body()
+    println("-------------------------")
 
-    println(specificLinkBody.toString())
+    run {
+        val request = linkService.getLink(5).execute()
+
+        if(!request.isSuccessful) {
+            error(request.errorBody()!!.string())
+        }
+
+        val body: Link? = request.body()
+
+        println(body.toString())
+    }
+
+    println("----------LISTS----------")
+
+    val listService = testClient.getClient().create(ListService::class.java)
+    run {
+        val request = listService.getLists().execute()
+        if(!request.isSuccessful) {
+            println("ERROR")
+            error(request.errorBody()!!.string())
+        }
+//        println(request.raw().message())
+        val body: PaginatedResponse<LinktList>? = request.body()
+
+        println(body?.objects.toString())
+    }
 
     exitProcess(0) // And that's a wrap!
 }
