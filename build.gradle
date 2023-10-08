@@ -1,12 +1,26 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    id 'maven-publish'
 }
 
 group = 'com.divbyruss.libraries'
-version = '1.0-SNAPSHOT'
+version = '0.1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/russjr08/linkt"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 dependencies {
