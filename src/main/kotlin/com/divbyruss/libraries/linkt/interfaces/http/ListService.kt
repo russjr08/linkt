@@ -1,11 +1,11 @@
 package com.divbyruss.libraries.linkt.interfaces.http
 
 import com.divbyruss.libraries.linkt.pojos.LinktList
+import com.divbyruss.libraries.linkt.pojos.NewList
 import com.divbyruss.libraries.linkt.pojos.PaginatedResponse
 import com.divbyruss.libraries.linkt.pojos.SortField
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ListService {
 
@@ -32,4 +32,38 @@ interface ListService {
      */
     @GET("lists")
     fun getPagedLists(@Query("page") page: Int): Call<PaginatedResponse<LinktList>>
+
+    /**
+     * Creates a new List with the target LinkAce instance, and returns the resultant [LinktList].
+     * @param list The [NewList] to create against the LinkAce API.
+     * @return The new [LinktList] that was created, if successful.
+     */
+    @POST("lists")
+    fun createNewList(@Body list: NewList): Call<LinktList>
+
+    /**
+     * Grabs a specific [LinktList] from the LinkAce API.
+     * @param listId The ID of the List that you wish to obtain from LinkAce.
+     * @return The [LinktList], if found.
+     */
+    @GET("lists/{list_id}")
+    fun getList(@Query("list_id") listId: Int): Call<LinktList>
+
+    /**
+     * Updates a specific [LinktList] with LinkAce.
+     * @param listId The ID of the List to update.
+     * @param list The new representation of the List to update the server-side copy to.
+     * @return The resulting copy of the new List from LinkAce.
+     */
+    @PATCH("lists/{list_id}")
+    fun updateList(@Query("list_id") listId: Int, @Body list: NewList): Call<LinktList>
+
+    /**
+     * Deletes a [LinktList] from LinkAce.
+     * These are generally "soft-deleted" from the database,
+     * and can be retrieved from the Trash.
+     * @param listId The ID of the List to be deleted.
+     */
+    @DELETE("lists/{list_id}")
+    fun deleteList(@Query("list_id") listId: Int): Call<Void>
 }
