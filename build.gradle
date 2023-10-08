@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.divbyruss.libraries'
-version = '0.1.0-SNAPSHOT'
+version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -16,9 +16,20 @@ publishing {
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/russjr08/linkt"
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                if(System.getenv("GITHUB_ACTOR") != null && System.getenv("GITHUB_TOKEN") != null) {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                } else {
+                    username = project.property("ghActor")
+                    password = project.property("ghToken")
+                }
             }
+        }
+    }
+
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
         }
     }
 }
